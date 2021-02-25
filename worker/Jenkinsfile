@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+    
+    stages{
+        stage('build'){
+            steps{
+                echo "compiling worker app")
+                dir('worker'){
+                    sh 'mvn compile'
+                }
+                }
+            }
+        }
+         stage('test'){
+            steps{
+               echo "running unit tests"
+            }
+        }
+         stage('package'){
+            steps{
+                echo "packaging worker app"
+            }
+        }
+    }
+    
+    
+}
