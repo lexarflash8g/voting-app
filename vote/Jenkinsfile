@@ -30,6 +30,7 @@ pipeline {
             steps{
                echo "running unit tests" 
                dir('vote'){
+                    sh 'pip install nose'
                     sh 'nosetests -v'
 
                 }
