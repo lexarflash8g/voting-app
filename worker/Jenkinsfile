@@ -6,7 +6,7 @@ pipeline {
         }
     }
    
-    }
+    
     stages{
         stage('build'){
             
@@ -52,7 +52,8 @@ pipeline {
                        }  
                     }
                 }
-                      
+            
+                
 
     
     
