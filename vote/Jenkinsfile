@@ -14,7 +14,7 @@ pipeline {
             }
             steps{
                 echo "compiling worker app"
-                dir('worker'){
+                dir('vote'){
                     sh 'pip install -r requirements.txt'
                    
                 }
@@ -28,7 +28,7 @@ pipeline {
             }
             steps{
                echo "running unit tests" 
-               dir('worker'){
+               dir('vote'){
                     sh 'nosetests -v'
 
                 }
