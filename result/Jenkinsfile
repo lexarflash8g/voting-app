@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+    
+    tools {
+        nodejs 'node'
+    }
+    stages{
+        stage('build'){
+            when{
+               
+                 changeset "**/result/**"
+            }
+            steps{
+                echo "compiling worker app"
+                dir('worker'){
+                    sh 'npm install'
+                   
+                }
+                }
+            }
+        
+         stage('test'){
+            when{
+
+                 changeset "**/result/**"
+            }
+            steps{
+               echo "running unit tests" 
+               dir('worker'){
+                    sh 'npm install'
+                    sh 'npm test'
+
+                }
+            }
+        }
+                
+    }
+}
+        
