@@ -50,9 +50,9 @@ pipeline {
                  dir('worker'){
                     script{
                         docker.withRegistry('https://index.docker.io/v1','dockerlogin') {
-                        def workerImage = docker.build("lexarflash8g/worker:v${env.BUILD_ID}", "./worker")
-                        workerImage.push()
-                        workerImage.push("${env.BRANCH_NAME}")
+                            def workerImage = docker.build("lexarflash8g/worker:v${env.BUILD_ID}", "./worker")
+                            workerImage.push()
+                            workerImage.push("${env.BRANCH_NAME}")
                     }
                     }
                 }
