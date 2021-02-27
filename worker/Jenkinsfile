@@ -50,7 +50,6 @@ pipeline {
                  dir('worker'){
                     script{
                         docker.WithRegistry('https://index.docker.io/v1','dockerlogin') {
-                        
                         def workerImage = docker.build("lexarflash8g/worker:${env.BUILD_ID}", "./worker")
                         workerImage.push()
                         workerImage.push("${env.BRANCH_NAME}")
@@ -59,6 +58,7 @@ pipeline {
                 }
             }
         }
+    
     
  post{    
      always{        
