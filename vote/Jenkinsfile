@@ -1,4 +1,5 @@
 pipeline {
+    agent none
     agent {
         docker{
             image 'python:2.7.16-slim'
@@ -8,10 +9,20 @@ pipeline {
 
     
     stages{
+
+
         stage('build'){
+            agent {
+        docker{
+            image 'python:2.7.16-slim'
+            args '-u root'
+        }
+    }
+
             when{
                
                  changeset "**/vote/**"
+                 branch 'master'
             }
             steps{
                 echo "compiling worker app"
@@ -23,9 +34,17 @@ pipeline {
             }
         
          stage('test'){
-            when{
+             agent {
+        docker{
+            image 'python:2.7.16-slim'
+            args '-u root'
+        }
+    }
 
+            when{
+               
                  changeset "**/vote/**"
+                 branch 'master'
             }
             steps{
                echo "running unit tests" 
@@ -36,6 +55,28 @@ pipeline {
                 }
             }
         }
+
+        stage('docker package'){
+           agent any
+           when {
+               changeset "**/vote/**"
+               branch 'master'
+           }
+        
+            steps{
+                echo "docker package"
+                 dir('vote'){
+                    script{
+                        docker.withRegistry('https://index.docker.io/v1/','dockerlogin') {
+                            def workerImage = docker.build("lexarflash8g/vote:v${env.BUILD_ID}", "./")
+                                workerImage.push()
+                                workerImage.push("${env.BRANCH_NAME}")
+                    }
+                    }
+                }
+            }
+        }
+    
                 
     }
 }
