@@ -1,11 +1,19 @@
-FROM microsoft/dotnet:1.0.0-preview2-sdk
+FROM java:openjdk-8-jdk-alpine
+
+RUN MAVEN_VERSION=3.3.3 \
+ && cd /usr/share \
+ && wget http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz -O - | tar xzf - \
+ && mv /usr/share/apache-maven-$MAVEN_VERSION /usr/share/maven \
+ && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
 
 WORKDIR /code
 
-ADD src/Worker /code/src/Worker
+ADD pom.xml /code/pom.xml
+RUN ["mvn", "dependency:resolve"]
+RUN ["mvn", "verify"]
 
-RUN dotnet restore -v minimal src/ \
-    && dotnet publish -c Release -o ./ src/Worker/ \
-    && rm -rf src/ $HOME/.nuget/
+# Adding source, compile and package into a fat jar
+ADD src/main /code/src/main
+RUN ["mvn", "package"]
 
-CMD dotnet Worker.dll
+CMD ["java", "-jar", "target/worker-jar-with-dependencies.jar"]
