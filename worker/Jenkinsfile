@@ -1,4 +1,5 @@
 pipeline {
+    agent none
     agent{
         docker{
             image 'maven:3.6.1-jdk-8-slim'
@@ -10,6 +11,13 @@ pipeline {
     
     stages{
         stage('build'){
+            agent{
+                    docker{
+                         image 'maven:3.6.1-jdk-8-slim'
+                        args '-v $HOME/.m2:/root/.m2:z -u root'
+                        reuseNode true
+        }
+    }
             
             steps{
                 echo "compiling worker app"
@@ -19,7 +27,15 @@ pipeline {
                 }
             }
         
+                }
          stage('test'){
+             agent{
+                    docker{
+                         image 'maven:3.6.1-jdk-8-slim'
+                        args '-v $HOME/.m2:/root/.m2:z -u root'
+                        reuseNode true
+        }
+    }
      
             
             steps{
@@ -30,6 +46,13 @@ pipeline {
             }
         }
          stage('package'){
+            agent{
+                    docker{
+                         image 'maven:3.6.1-jdk-8-slim'
+                        args '-v $HOME/.m2:/root/.m2:z -u root'
+                        reuseNode true
+        }
+    }
       
         
             steps{
@@ -43,7 +66,7 @@ pipeline {
         
            
            stage('docker package'){
-      
+           agent any
         
             steps{
                 echo "docker package"
