@@ -17,7 +17,7 @@ pipeline {
             when{
                
                  changeset "**/vote/**"
-                 branch 'master'
+                 
             }
             steps{
                 echo "compiling worker app"
@@ -39,7 +39,7 @@ pipeline {
             when{
                
                  changeset "**/vote/**"
-                 branch 'master'
+                
             }
             steps{
                echo "running unit tests" 
@@ -55,7 +55,7 @@ pipeline {
            agent any
            when {
                changeset "**/vote/**"
-               branch 'master'
+              
            }
         
             steps{
