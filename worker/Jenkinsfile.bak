@@ -1,0 +1,246 @@
+pipeline {
+    agent none
+    tools {
+        nodejs 'node'
+    }
+    
+   
+    
+    stages{
+        stage('build'){
+            agent{
+                    docker{
+                         image 'maven:3.6.1-jdk-8-slim'
+                        args '-v $HOME/.m2:/root/.m2:z -u root'
+                        reuseNode true
+        }
+    }
+    when {
+               changeset "**/worker/**"
+               branch 'master'
+           }
+            
+            steps{
+                echo "compiling worker app"
+                dir('worker'){
+                    sh 'mvn compile'
+                }
+                }
+            }
+        
+                
+         stage('test'){
+             agent{
+                    docker{
+                         image 'maven:3.6.1-jdk-8-slim'
+                        args '-v $HOME/.m2:/root/.m2:z -u root'
+                        reuseNode true
+        }
+    }
+    when {
+               changeset "**/worker/**"
+               branch 'master'
+           }
+     
+            
+            steps{
+               echo "running unit tests" 
+               dir('worker'){
+                    sh 'mvn clean test'
+                }
+            }
+        }
+         stage('package'){
+            agent{
+                    docker{
+                         image 'maven:3.6.1-jdk-8-slim'
+                        args '-v $HOME/.m2:/root/.m2:z -u root'
+                        reuseNode true
+        }
+    }
+    when {
+               changeset "**/worker/**"
+               branch 'master'
+           }
+      
+        
+            steps{
+                echo "packaging worker app"
+                 dir('worker'){
+                    sh 'mvn package -DskipTests'
+                    archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+                 }
+            }
+         }
+         
+        
+           
+           stage('docker package'){
+           agent any
+           when {
+               changeset "**/worker/**"
+               branch 'master'
+           }
+        
+            steps{
+                echo "docker package"
+                 dir('worker'){
+                    script{
+                        docker.withRegistry('https://index.docker.io/v1/','dockerlogin') {
+                            def workerImage = docker.build("lexarflash8g/worker:v${env.BUILD_ID}", "./")
+                                workerImage.push()
+                                workerImage.push("${env.BRANCH_NAME}")
+                    }
+                    }
+                }
+            }
+        }
+
+       
+        stage('buildnode'){
+            agent {
+        docker{
+            image 'node:8.16.0-alpine'
+        }
+    }
+            when{
+               
+                 changeset "**/result/**"
+                 branch 'master'
+            }
+            steps{
+                echo "compiling worker app"
+                dir('result'){
+                    sh 'npm install'
+                   
+                }
+                }
+            }
+        
+         stage('testnode'){
+             agent {
+        docker{
+            image 'node:8.16.0-alpine'
+        }
+    }
+            when{
+               
+                 changeset "**/result/**"
+                 branch 'master'
+            }
+            steps{
+               echo "running unit tests" 
+               dir('result'){
+                    sh 'npm install'
+                    sh 'npm test'
+
+                }
+            }
+        }
+
+        stage('docker package node'){
+           agent any
+           when {
+               changeset "**/result/**"
+               branch 'master'
+           }
+        
+            steps{
+                echo "docker package"
+                 dir('result'){
+                    script{
+                        docker.withRegistry('https://index.docker.io/v1/','dockerlogin') {
+                            def workerImage = docker.build("lexarflash8g/result:v${env.BUILD_ID}", "./")
+                                workerImage.push()
+                                workerImage.push("${env.BRANCH_NAME}")
+                    }
+                    }
+                }
+            }
+        }
+
+        stage('buildpython'){
+            agent {
+        docker{
+            image 'python:2.7.16-slim'
+            args '-u root'
+        }
+    }
+
+            when{
+               
+                 changeset "**/vote/**"
+                 
+            }
+            steps{
+                echo "compiling worker app"
+                dir('vote'){
+                    sh 'pip install -r requirements.txt'
+                   
+                }
+                }
+            }
+        
+         stage('testpython'){
+             agent {
+        docker{
+            image 'python:2.7.16-slim'
+            args '-u root'
+        }
+    }
+
+            when{
+               
+                 changeset "**/vote/**"
+                
+            }
+            steps{
+               echo "running unit tests" 
+               dir('vote'){
+                    sh 'pip install nose'
+                    sh 'nosetests -v'
+
+                }
+            }
+        }
+
+        stage('docker package python'){
+           agent any
+           when {
+               changeset "**/vote/**"
+              
+           }
+        
+            steps{
+                echo "docker package"
+                 dir('vote'){
+                    script{
+                        docker.withRegistry('https://index.docker.io/v1/','dockerlogin') {
+                            def workerImage = docker.build("lexarflash8g/vote:v${env.BUILD_ID}", "./")
+                                workerImage.push()
+                                workerImage.push("${env.BRANCH_NAME}")
+                    }
+                    }
+                 }
+            }
+        }
+    }
+
+}
+
+    
+//  post{    
+//      always{        
+//          echo 'Building multibranch pipeline for worker is completed..'    
+//          }    
+//          failure{      
+//              slackSend (channel: "instavote-cd", message: "Build Failed - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")    
+//              } 
+//                 success{      
+//                     slackSend (channel: "instavote-cd", message: "Build Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)") 
+//                        }  
+//                     }
+//                 }
+
+            
+                
