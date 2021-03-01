@@ -206,7 +206,8 @@ pipeline {
     stage('docker-compose up') {
       steps {
         dir(path: 'worker')
-        sh 'docker-compose up -d'
+        sh 'export TAG= ${env.BUILD_ID}'
+        sh 'cat docker-compose.yml | envsubst | docker-compose up -d'
       }
     }
 

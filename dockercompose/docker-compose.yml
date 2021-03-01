@@ -9,7 +9,7 @@ networks:
 
 services:
   vote:  
-    image: lexarflash8g/vote:latest  
+    image: lexarflash8g/vote:$TAG  
     ports:    
       - 5000:80
     depends_on:
@@ -33,7 +33,7 @@ services:
 
 
   result:  
-    image: lexarflash8g/result:latest  
+    image: lexarflash8g/result:$TAG  
     ports:    
       - 5001:4000
     depends_on:
@@ -42,7 +42,7 @@ services:
       - instavote
 
   worker:  
-    image: lexarflash8g/worker:latest
+    image: lexarflash8g/worker:$TAG
     depends_on:
       - redis
       - db
