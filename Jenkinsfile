@@ -206,6 +206,7 @@ pipeline {
     stage('docker-compose up') {
       steps {
         dir(path: 'worker')
+        sh 'docker-compose up -d'
       }
     }
 
