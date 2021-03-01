@@ -122,8 +122,13 @@ pipeline {
       steps {
         echo 'running unit tests'
         dir(path: 'result') {
-          sh 'npm install'
-          sh 'npm test'
+         
+                    sh 'npm install'
+                    sh 'cd tests'
+                    sh 'docker build -t tests .'
+                    sh 'docker run tests'
+
+
         }
 
       }
