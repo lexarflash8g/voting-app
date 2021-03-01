@@ -105,7 +105,7 @@ pipeline {
     }
             when{
                
-                 changeset "**/result/**"
+                
                  branch 'master'
             }
             steps{
@@ -125,7 +125,7 @@ pipeline {
     }
             when{
                
-                 changeset "**/result/**"
+                 
                  branch 'master'
             }
             steps{
@@ -141,7 +141,7 @@ pipeline {
         stage('docker package node'){
            agent any
            when {
-               changeset "**/result/**"
+               
                branch 'master'
            }
         
@@ -167,11 +167,6 @@ pipeline {
         }
     }
 
-            when{
-               
-                 changeset "**/vote/**"
-                 
-            }
             steps{
                 echo "compiling worker app"
                 dir('vote'){
@@ -189,9 +184,9 @@ pipeline {
         }
     }
 
-            when{
+          
                
-                 changeset "**/vote/**"
+                 
                 
             }
             steps{
@@ -206,10 +201,7 @@ pipeline {
 
         stage('docker package python'){
            agent any
-           when {
-               changeset "**/vote/**"
-              
-           }
+           
         
             steps{
                 echo "docker package"
