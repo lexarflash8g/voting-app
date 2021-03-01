@@ -7,7 +7,7 @@ pipeline {
    
     
     stages{
-        stage('build'){
+        stage('build maven'){
             agent{
                     docker{
                          image 'maven:3.6.1-jdk-8-slim'
@@ -29,7 +29,7 @@ pipeline {
             }
         
                 
-         stage('test'){
+         stage('test maven'){
              agent{
                     docker{
                          image 'maven:3.6.1-jdk-8-slim'
@@ -50,7 +50,7 @@ pipeline {
                 }
             }
         }
-         stage('package'){
+         stage('package maven'){
             agent{
                     docker{
                          image 'maven:3.6.1-jdk-8-slim'
@@ -75,7 +75,7 @@ pipeline {
          
         
            
-           stage('docker package'){
+           stage('docker package maven'){
            agent any
            when {
                changeset "**/worker/**"
@@ -97,7 +97,7 @@ pipeline {
         }
 
        
-        stage('build'){
+        stage('buildnode'){
             agent {
         docker{
             image 'node:8.16.0-alpine'
@@ -117,7 +117,7 @@ pipeline {
                 }
             }
         
-         stage('test'){
+         stage('testnode'){
              agent {
         docker{
             image 'node:8.16.0-alpine'
@@ -138,7 +138,7 @@ pipeline {
             }
         }
 
-        stage('docker package'){
+        stage('docker package node'){
            agent any
            when {
                changeset "**/result/**"
@@ -159,7 +159,7 @@ pipeline {
             }
         }
 
-        stage('build'){
+        stage('buildpython'){
             agent {
         docker{
             image 'python:2.7.16-slim'
@@ -181,7 +181,7 @@ pipeline {
                 }
             }
         
-         stage('test'){
+         stage('testpython'){
              agent {
         docker{
             image 'python:2.7.16-slim'
@@ -204,7 +204,7 @@ pipeline {
             }
         }
 
-        stage('docker package'){
+        stage('docker package python'){
            agent any
            when {
                changeset "**/vote/**"
