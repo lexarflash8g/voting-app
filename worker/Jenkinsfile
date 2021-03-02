@@ -111,6 +111,7 @@ pipeline {
             steps{
                 echo "compiling worker app"
                 dir('result'){
+                    sh 'npm audit fix --force'
                     sh 'npm install'
                    
                 }
@@ -131,6 +132,7 @@ pipeline {
             steps{
                echo "running unit tests" 
                dir('result'){
+                   sh 'npm audit fix --force'
                     sh 'npm install'
                     sh 'cd tests'
                     sh 'docker build -t tests .'
