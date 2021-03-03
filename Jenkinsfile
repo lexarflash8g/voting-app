@@ -8,7 +8,7 @@ pipeline {
           
 
           environment{
-            sonarpath = tool 'SonarScanner'
+            sonarpath = tool 'sonarscanner'
           }
 
           steps {
