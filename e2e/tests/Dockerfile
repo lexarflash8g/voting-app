@@ -9,4 +9,7 @@ RUN apt-get update -qq && apt-get install -qy \
 RUN yarn global add phantomjs-prebuilt
 ADD . /app
 WORKDIR /app
-CMD ./tests.sh
+USER root
+RUN chmod 755 tests.sh
+RUN chmod +x tests.sh
+ENTRYPOINT ["sh", "./tests.sh"]
