@@ -267,4 +267,4 @@ steps{
         sh 'cat docker-compose.yml | envsubst | docker-compose up -d'
       }
     }
-
+}
