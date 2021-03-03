@@ -268,8 +268,3 @@ steps{
       }
     }
 
-  }
-  tools {
-    nodejs 'node'
-  }
-}
