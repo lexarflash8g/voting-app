@@ -2,33 +2,7 @@ pipeline {
   agent none
   stages {
 
-    stage('Sonarqube') {
-          agent any
-          
-          
-
-          environment{
-            sonarpath = tool 'sonarscanner'
-          }
-
-          steps {
-                echo 'Running Sonarqube Analysis..'
-                withSonarQubeEnv('sonar-instavote') {
-                  sh "${sonarpath}/bin/sonar-scanner -Dsonar.verbose=true -Dproject.settings=sonar-project.properties -Dorg.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL=86400"
-                }
-          }
-        }
-
-
-        stage("Quality Gate") {
-            steps {
-                timeout(time: 1, unit: 'HOURS') {
-                    // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
-                    // true = set pipeline to UNSTABLE, false = don't
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
+   
 
         
 
@@ -215,6 +189,27 @@ pipeline {
 
     
 
+     stage('vote test') {
+      agent {
+        docker {
+          image 'python:2.7.16-slim'
+          args '--user root'
+        }
+
+      }
+      when {
+        changeset '**/vote/**'
+      }
+      steps {
+        echo 'Running Unit Tets on vote app..'
+        dir(path: 'vote') {
+          sh 'pip install -r requirements.txt'
+          sh 'nosetests -v'
+        }
+
+      }
+    }
+
 stage('vote integration'){
   agent any
   when {
@@ -232,15 +227,6 @@ steps{
 }
 
 
-      steps {
-        echo 'running unit tests'
-        dir(path: 'vote') {
-          sh 'pip install nose'
-          sh 'nosetests -v'
-        }
-
-      }
-    }
 
     stage('docker package python') {
       agent any
@@ -259,6 +245,36 @@ steps{
 
       }
     }
+
+
+ stage('Sonarqube') {
+          agent any
+          
+          
+
+          environment{
+            sonarpath = tool 'sonarscanner'
+          }
+
+          steps {
+                echo 'Running Sonarqube Analysis..'
+                withSonarQubeEnv('sonar-instavote') {
+                  sh "${sonarpath}/bin/sonar-scanner -Dsonar.verbose=true -Dproject.settings=sonar-project.properties -Dorg.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL=86400"
+                }
+          }
+        }
+
+
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+                    // true = set pipeline to UNSTABLE, false = don't
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+  
 
     stage('docker-compose up') {
       steps {
