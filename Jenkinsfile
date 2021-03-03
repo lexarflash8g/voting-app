@@ -192,6 +192,10 @@ pipeline {
       }
     }
 
+
+
+
+
     stage('buildpython') {
       agent {
         docker {
@@ -217,6 +221,24 @@ pipeline {
         }
 
       }
+
+stage('vote integration'){
+  agent any
+  when {
+    changeset "**/vote/**"
+    branch 'master'
+  }
+
+steps{
+  echo "running integration tets on vote app"
+  dir('vote'){
+    sh 'integration_test.sh'
+  }
+}
+
+}
+
+
       steps {
         echo 'running unit tests'
         dir(path: 'vote') {
