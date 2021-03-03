@@ -120,7 +120,8 @@ pipeline {
       }
     }
 
-    stage('testnode') {
+
+    stage('result test') {
       agent {
         docker {
           image 'node:8.16.0-alpine'
@@ -128,18 +129,13 @@ pipeline {
 
       }
       when {
-        branch 'master'
+        changeset '**/result/**'
       }
       steps {
-        echo 'running unit tests'
+        echo 'Running Unit Tets on result app..'
         dir(path: 'result') {
-         
-                    sh 'npm install'
-                    sh 'cd tests'
-                    sh 'docker build -t tests .'
-                    sh 'docker run tests'
-
-
+          sh 'npm install'
+          sh 'npm test'
         }
 
       }
