@@ -1,6 +1,7 @@
 var express = require('express'),
     async = require('async'),
     pg = require("pg"),
+    path = require("path"),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
@@ -14,7 +15,7 @@ var port = process.env.PORT || 4000;
 
 io.sockets.on('connection', function (socket) {
 
-  socket.emit('message', { text : 'Welcome!' , options : {a: process.env.OPTION_A||"Cats", b: process.env.OPTION_B||"Dogs"}});
+  socket.emit('message', { text : 'Welcome!' });
 
   socket.on('subscribe', function (data) {
     socket.join(data.channel);
@@ -33,7 +34,7 @@ async.retry(
   },
   function(err, client) {
     if (err) {
-      return console.err("Giving up");
+      return console.error("Giving up");
     }
     console.log("Connected to db");
     getVotes(client);

@@ -1,10 +1,10 @@
 {
   "name": "result",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node_modules/.bin/mocha"
   },
   "author": "",
   "license": "MIT",
@@ -22,4 +22,3 @@
     "mocha": "^3.4.2"
   }
 }
-
