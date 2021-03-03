@@ -213,14 +213,7 @@ pipeline {
       }
     }
 
-    stage('testpython') {
-      agent {
-        docker {
-          image 'python:2.7.16-slim'
-          args '-u root'
-        }
-
-      }
+    
 
 stage('vote integration'){
   agent any
